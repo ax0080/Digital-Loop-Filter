@@ -15,9 +15,9 @@ parameter signed [coeff_width - 1 : 0] b1 = 20'b00_0000_0001_0100_1100_01;
 parameter signed [coeff_width - 1 : 0] b2 = 20'b11_1111_1110_1101_1000_10;
 parameter signed [coeff_width - 1 : 0] b3 = 20'b11_1111_1110_1100_1100_00;
   
-parameter signed [coeff_width - 1 : 0] a1 = 20'b01_1010_0100_0101_1010_00;//_1001_0100;
-parameter signed [coeff_width - 1 : 0] a2 = 20'b00_1011_0100_0110_1011_11;//_1110_1100;
-parameter signed [coeff_width - 1 : 0] a3 = 20'b11_1110_1111_1111_0000_11;//_1001_1000;
+parameter signed [coeff_width - 1 : 0] a1 = 20'b01_1010_0100_0101_1010_00;
+parameter signed [coeff_width - 1 : 0] a2 = 20'b00_1011_0100_0110_1011_11;
+parameter signed [coeff_width - 1 : 0] a3 = 20'b11_1110_1111_1111_0000_11;
 
 
 input clk;
