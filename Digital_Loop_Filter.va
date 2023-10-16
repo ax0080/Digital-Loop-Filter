@@ -3,13 +3,13 @@ input master_in;
 output slave_out;
 
 // Parameters
-parameter real b0 = 1.25;  // 根據20位二進制值進行轉換
-parameter real b1 = 1.293; // 例如，這些值應該基於20位的真實轉換
-parameter real b2 = -0.295;
-parameter real b3 = -0.3;
-parameter real a1 = 2.164;
-parameter real a2 = 1.395;
-parameter real a3 = -0.125;
+parameter real b0 = 0.0048837;  // 根據20位二進制值進行轉換
+parameter real b1 = 0.0050728; // 例如，這些值應該基於20位的真實轉換
+parameter real b2 = -0.0045088;
+parameter real b3 = -0.0046962;
+parameter real a1 = -1.642;
+parameter real a2 = 0.70477;
+parameter real a3 = -0.06273;
 
 // Internal variables
 real in_delay1 = 0;
