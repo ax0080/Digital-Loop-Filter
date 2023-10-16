@@ -1,0 +1,41 @@
+module Digital_Loop_Filter (master_in, slave_out);
+input master_in;
+output slave_out;
+
+// Parameters
+parameter real b0 = 1.25;  // 根據20位二進制值進行轉換
+parameter real b1 = 1.293; // 例如，這些值應該基於20位的真實轉換
+parameter real b2 = -0.295;
+parameter real b3 = -0.3;
+parameter real a1 = 2.164;
+parameter real a2 = 1.395;
+parameter real a3 = -0.125;
+
+// Internal variables
+real in_delay1 = 0;
+real in_delay2 = 0;
+real in_delay3 = 0;
+real out_delay1 = 0;
+real out_delay2 = 0;
+real out_delay3 = 0;
+real output_int = 0;
+
+analog begin
+    // Save previous input values
+    in_delay3 = in_delay2;
+    in_delay2 = in_delay1;
+    in_delay1 = master_in;
+
+    // Save previous output values
+    out_delay3 = out_delay2;
+    out_delay2 = out_delay1;
+    out_delay1 = output_int;
+
+    // IIR Filter computation
+    output_int = b0 * master_in + b1 * in_delay1 + b2 * in_delay2 + b3 * in_delay3 
+                 - a1 * out_delay1 - a2 * out_delay2 - a3 * out_delay3;
+
+    V(slave_out) <+ output_int;  // Assign the value to the output
+end
+
+endmodule
