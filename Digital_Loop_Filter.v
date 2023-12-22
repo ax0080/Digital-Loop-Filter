@@ -1,8 +1,18 @@
+/* 
+This is for AICLAB718 Novatek ADPLL Project
+The Digital Loop Filter is a third order Digital Loop Filter
+clk : clock signal for the Filter
+rstn : set it 0 when we need reset
+master_in : Input of Digital Loop Filter, in our case, it is connected to ADC output
+slave_out : Output of Digital Loop Filter, in our case, it is connected to Digital Controlled Oscillator
+lead : High means feedback lead, low means ref lead
+*/ 
 module Digital_Loop_Filter(
 	clk,
 	rstn,
 	master_in,
-	slave_out
+	slave_out,
+	lead
 );
 parameter inout_width = 8;
 parameter coeff_int_width = 2;
