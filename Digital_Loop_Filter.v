@@ -97,7 +97,7 @@ end
 
 //output
 assign out_sum = b0 + in1 + in2 + in3 - out1 - out2 - out3;
-assign out_temp = out_sum[coeff_decimal_width + inout_width  : coeff_decimal_width];
+assign out_temp = out_sum[coeff_decimal_width + inout_width : coeff_decimal_width];
 assign slave_out = out_temp[7:0];
 
 endmodule
