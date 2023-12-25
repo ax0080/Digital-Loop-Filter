@@ -38,25 +38,26 @@ output reg [inout_width - 1 : 0] slave_out;
 
 
 //register
-signed wire [inout_width : 0] in_temp;
-signed reg [inout_width : 0] in_delay1;
-signed reg [inout_width : 0] in_delay2;
-signed reg [inout_width : 0] in_delay3; 
+wire signed [inout_width : 0] in_temp;
+reg signed [inout_width : 0] in_delay1;
+reg signed [inout_width : 0] in_delay2;
+reg signed [inout_width : 0] in_delay3; 
 			
-signed reg [inout_width : 0] out_delay1;
-signed reg [inout_width : 0] out_delay2;
-signed reg [inout_width : 0] out_delay3;
+reg signed [inout_width : 0] out_delay1;
+reg signed [inout_width : 0] out_delay2;
+reg signed [inout_width : 0] out_delay3;
 
 //wire
-signed wire [inout_width + coeff_width : 0] in1;  
-signed wire [inout_width + coeff_width : 0] in2; 
-signed wire [inout_width + coeff_width : 0] in3; 
+wire signed [inout_width + coeff_width : 0] in1;  
+wire signed [inout_width + coeff_width : 0] in2; 
+wire signed [inout_width + coeff_width : 0] in3; 
 			  
-signed wire [inout_width + coeff_width : 0] out1;  
-signed wire [inout_width + coeff_width : 0] out2; 
-signed wire [inout_width + coeff_width : 0] out3;
+wire signed [inout_width + coeff_width : 0] out1;  
+wire signed [inout_width + coeff_width : 0] out2; 
+wire signed [inout_width + coeff_width : 0] out3;
 
-signed wire [inout_width + coeff_width + 3 : 0] out_sum;
+wire signed [inout_width + coeff_width + 3 : 0] out_sum;
+reg signed [inout_width + coeff_width + 3 : 0] out_temp; // Added this line
  
 //change to signed
 always @ (*) begin
@@ -101,7 +102,3 @@ assign out_temp = out_sum[coeff_decimal_width + inout_width : coeff_decimal_widt
 assign slave_out = out_temp[7:0];
 
 endmodule
-
-
-
-
