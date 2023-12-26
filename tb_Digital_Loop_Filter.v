@@ -1,12 +1,11 @@
-`timescale 1ns/1ps
 
 module tb_Digital_Loop_Filter;
   
 reg clk;
 reg rstn;
-reg master_in;
-wire slave_out;
-wire lead;
+reg [7:0] master_in;
+wire [7:0] slave_out;
+reg lead;
   
 Digital_Loop_Filter DLF
 (
@@ -17,10 +16,6 @@ Digital_Loop_Filter DLF
   .lead(lead)
 );
   
-initial begin
-  $dumpfile("tb.vcd");
-  $dumpvars(0);   
-end
   
 initial begin
   clk = 0;
@@ -29,22 +24,44 @@ initial begin
   end
 end
 
+//waveform
 initial begin
-  rstn = 0;
-  lead = 0;
+  $fsdbDumpfile("tb_Digital_Loop_Filter.fsdb");
+  $fsdbDumpvars;
+end
+
+
+
+
+
+initial begin
+  rstn = 1'b0;
+  lead = 1'b0;
   
   #50
   rstn = 1'b1;
-  lead = 1'b1;
-  master_in = 8'b10100001;
-  
-  #100
-  lead = 1'b1;
-  master_in = 8'b11001111;
-  
-  #100
   lead = 1'b0;
-  master_in = 8'b10111111;
+  master_in = 8'b10001010;
+
+  #100
+  $display("output = %d", slave_out);
   
+  #100
+  lead = 1'b1;
+  master_in = 8'b11011111;
+
+  #100
+  $display("output = %d", slave_out);
+
+  #100
+  lead = 1'b1;
+  master_in = 8'b01011110;
+
+  #1000
+
+  $display("output = %d", slave_out);  
+
+  $finish();
+end
   
 endmodule
