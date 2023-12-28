@@ -47,7 +47,6 @@ reg signed [inout_width : 0] out_delay1;
 reg signed [inout_width : 0] out_delay2;
 reg signed [inout_width : 0] out_delay3;
 
-reg signed [inout_width : 0] out_temp;
 
 //wire
 wire signed [inout_width + coeff_width : 0] in0;
@@ -90,18 +89,15 @@ always @ (posedge clk or negedge rstn) begin
 		out_delay1 <= 9'b0;
 		out_delay2 <= 9'b0;
 	  out_delay3 <= 9'b0;
-    out_temp <= 9'b0;
 	end
 	else begin
 		in_delay1 <= in_temp;
 		in_delay2 <= in_delay1;
 		in_delay3 <= in_delay2;
 		
-		out_delay1 <= out_temp;
+		out_delay1 <= out_sum[coeff_decimal_width + inout_width : coeff_decimal_width];
 		out_delay2 <= out_delay1;
 		out_delay3 <= out_delay2;
-
-    out_temp <= out_sum[coeff_decimal_width + inout_width : coeff_decimal_width];
   end
 
 end
@@ -109,6 +105,6 @@ end
 
 //output
 assign out_sum = in0 + in1 + in2 + in3 - out1 - out2 - out3;
-assign slave_out = out_temp[7:0];
+assign slave_out = out_sum[coeff_decimal_width + inout_width - 1 : coeff_decimal_width];
 
 endmodule

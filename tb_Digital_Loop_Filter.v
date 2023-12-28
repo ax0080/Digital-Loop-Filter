@@ -40,24 +40,34 @@ initial begin
   
   #50
   rstn = 1'b1;
-  lead = 1'b0;
-  master_in = 8'b10001010;
+  lead = 1'b1;
+  master_in = 8'b10010110;
 
-  #100
+  #150
   $display("output = %d", slave_out);
   
-  #100
-  lead = 1'b1;
-  master_in = 8'b11011111;
+  #50
+  lead = 1'b0;
+  master_in = 8'b01100000;
 
-  #100
+  #150
   $display("output = %d", slave_out);
 
-  #100
+  #50
   lead = 1'b1;
-  master_in = 8'b01011110;
+  master_in = 8'b00001111;
 
-  #1000
+  #150
+  $display("output = %d", slave_out);
+
+  #50
+  lead = 1'b0;
+  master_in = 8'b10101011;
+
+  #150
+  $display("output = %d", slave_out);
+
+  #2000
 
   $display("output = %d", slave_out);  
 
