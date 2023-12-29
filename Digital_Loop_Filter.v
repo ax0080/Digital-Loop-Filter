@@ -105,7 +105,7 @@ end
 
 //output
 assign out_sum = in0 + in1 + in2 + in3 - out1 - out2 - out3;
-assign slave_out = {out_sum[coeff_decimal_width + inout_width - 1] ,out_sum[coeff_decimal_width + inout_width - 2 : coeff_decimal_width]};
+assign slave_out = {~out_sum[coeff_decimal_width + inout_width - 1], out_sum[coeff_decimal_width + inout_width - 2 : coeff_decimal_width]};
 
 
 endmodule
