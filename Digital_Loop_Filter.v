@@ -108,7 +108,7 @@ wire [inout_width - 1 : 0] out_temp;
 
 assign out_sum = in0 + in1 + in2 + in3 - out1 - out2 - out3;
 assign out_temp = {out_sum[coeff_decimal_width + inout_width - 1 : coeff_decimal_width]};
-assign slave_out = {~out_temp[inout_width - 1], out_temp[inout_width - 1 : 0]};
+assign slave_out = {~out_temp[inout_width - 1], out_temp[inout_width - 2 : 0]};
 
 
 endmodule
