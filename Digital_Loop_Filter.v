@@ -1,18 +1,18 @@
-/* 
-This is for AICLAB718 Novatek ADPLL Project
-The Digital Loop Filter is a third order Digital Loop Filter
-clk : clock signal for the Filter
-rstn : set it 0 when we need reset
-master_in : Input of Digital Loop Filter, in our case, it is connected to ADC output
-slave_out : Output of Digital Loop Filter, in our case, it is connected to Digital Controlled Oscillator
-lead : High means feedback lead, low means ref lead
-*/ 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+////////// This is for AICLAB718 Novatek ADPLL Project ///////////////////////////////////////////////////////////////////////
+////////// The Digital Loop Filter is a third order direct-form II Transposed Digital Loop Filter 					//////////
+////////// clk : clock signal for the Filter 									                                    //////////
+////////// rstn : set it 0 when we need reset 																		//////////
+////////// master_in : Input of Digital Loop Filter, in our case, it is connected to ADC output                     //////////
+////////// slave_out : Output of Digital Loop Filter, in our case, it is connected to Digital Controlled Oscillator //////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+`timescale 100ps/1ps
+
 module Digital_Loop_Filter(
 	clk,
 	rstn,
 	master_in,
-	slave_out,
-	lead
+	slave_out
 );
 parameter inout_width = 8;
 parameter coeff_int_width = 2;
@@ -32,83 +32,69 @@ wire signed [coeff_width - 1 : 0] a3 = 20'b11_1110_1111_1111_0000_11; //-0.06273
 
 input clk;
 input rstn;
-input lead;
 input wire [inout_width - 1 : 0] master_in;
 output reg [inout_width - 1 : 0] slave_out;
 
 
-//register
-reg signed [inout_width : 0] in_temp;
-reg signed [inout_width : 0] in_delay1;
-reg signed [inout_width : 0] in_delay2;
-reg signed [inout_width : 0] in_delay3; 
-			
-reg signed [inout_width : 0] out_delay1;
-reg signed [inout_width : 0] out_delay2;
-reg signed [inout_width : 0] out_delay3;
+reg signed [inout_width - 1 : 0] in_temp;
+reg signed [inout_width + coeff_width + 2 : 0] out_sum;
+reg signed [inout_width - 1 : 0] out_temp;
+
+reg signed [inout_width + coeff_width - 1 : 0] in_b0;
+reg signed [inout_width + coeff_width - 1 : 0] in_b1;  
+reg signed [inout_width + coeff_width - 1 : 0] in_b2; 
+reg signed [inout_width + coeff_width - 1 : 0] in_b3; 	
+reg signed [inout_width + coeff_width - 1 : 0] out_a1;  
+reg signed [inout_width + coeff_width - 1 : 0] out_a2; 
+reg signed [inout_width + coeff_width - 1 : 0] out_a3;
+
+reg signed [inout_width + coeff_width + 2 : 0] s1z;
+reg signed [inout_width + coeff_width + 1 : 0] s2z;
+reg signed [inout_width + coeff_width + 0 : 0] s3z;
 
 
-//wire
-wire signed [inout_width + coeff_width : 0] in0;
-wire signed [inout_width + coeff_width : 0] in1;  
-wire signed [inout_width + coeff_width : 0] in2; 
-wire signed [inout_width + coeff_width : 0] in3; 
-			  
-wire signed [inout_width + coeff_width : 0] out1;  
-wire signed [inout_width + coeff_width : 0] out2; 
-wire signed [inout_width + coeff_width : 0] out3;
-
-wire signed [inout_width + coeff_width + 3 : 0] out_sum;
- 
-//change to signed
-always @ (*) begin
-	if(lead) in_temp = {1'b0, master_in};
-	else begin 
-    in_temp = {1'b1, ~master_in} + 1'b1;
-  end
+always @(*) begin
+	in_temp = {~master_in[inout_width - 1], master_in[inout_width - 2 : 0]};
 end
 
-//numerator
-assign in0 = b0 * in_temp; 
-assign in1 = b1 * in_delay1;
-assign in2 = b2 * in_delay2;
-assign in3 = b3 * in_delay3;
+always @(*) begin
+	in_b0 = in_temp * b0;
+	in_b1 = in_temp * b1;
+	in_b2 = in_temp * b2;
+	in_b3 = in_temp * b3;
+end
 
-//denominator
-assign out1 = a1 * out_delay1;
-assign out2 = a2 * out_delay2;
-assign out3 = a3 * out_delay3;
+always @(*) begin
+	out_a1 = out_temp * a1;
+	out_a2 = out_temp * a2;
+	out_a3 = out_temp * a3;
+end
+
+always @(*) begin
+	out_sum = s1z * in_b0;
+end
+
+always @(*) begin
+	out_temp = out_sum[coeff_decimal_width + inout_width : coeff_decimal_width];
+end
 
 
-always @ (posedge clk or negedge rstn) begin
-  if (!rstn) begin
-		in_delay1 <= 9'b0;
-		in_delay2 <= 9'b0;
-		in_delay3 <= 9'b0;
-		
-		out_delay1 <= 9'b0;
-		out_delay2 <= 9'b0;
-	  out_delay3 <= 9'b0;
+always @(posedge clk or negedge rstn) begin
+	if(!rstn) begin
+		s1z <= {(inout_width + coeff_decimal_width + 3){1'b0}};
+		s2z <= {(inout_width + coeff_decimal_width + 2){1'b0}};
+		s3z <= {(inout_width + coeff_decimal_width + 1){1'b0}};
 	end
 	else begin
-		in_delay1 <= in_temp;
-		in_delay2 <= in_delay1;
-		in_delay3 <= in_delay2;
-		
-		out_delay1 <= out_sum[coeff_decimal_width + inout_width : coeff_decimal_width];
-		out_delay2 <= out_delay1;
-		out_delay3 <= out_delay2;
-  end
-
+		s1z <= in_b1 - out_a1 + s2z;
+		s2z <= in_b2 - out_a2 + s3z;
+		s3z <= in_b3 - out_a3;
+	end
 end
 
-
-//output
-wire [inout_width - 1 : 0] out_temp;
-
-assign out_sum = in0 + in1 + in2 + in3 - out1 - out2 - out3;
-assign out_temp = {out_sum[coeff_decimal_width + inout_width - 1 : coeff_decimal_width]};
-assign slave_out = {~out_temp[inout_width - 1], out_temp[inout_width - 2 : 0]};
-
+// output
+always @(*) begin
+	slave_out = {~out_temp[inout_width - 1], out_temp[inout_width - 2 : 0]};
+end
 
 endmodule
